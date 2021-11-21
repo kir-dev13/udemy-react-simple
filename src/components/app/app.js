@@ -36,6 +36,7 @@ class App extends Component {
                     id: 3,
                 },
             ],
+            term: "",
         };
         this.maxId = 4;
     }
@@ -78,23 +79,23 @@ class App extends Component {
         }));
     };
 
-    // onToggleIncrease = (id) => {
-    //     this.setState(({ data }) => ({
-    //         data: data.map((elem) => {
-    //             if (elem.id === id) {
-    //                 return { ...elem, increase: !elem.increase };
-    //                 // elem.increase = !elem.increase;
-    //             }
-    //             return elem;
-    //         }),
-    //     }));
-    // };
-    // onToggleRise = (id) => {
-    //     console.log(`Rise this ${id}`);
-    // };
+    searchEmp = (items, term) => {
+        if (items.length === 0) {
+            return items;
+        }
+
+        return items.filter((item) => item.name.indexOf(term) > -1);
+        // return items.filter((item) => item.name === term);
+    };
+
+    onUpdateSearch = (term) => {
+        this.setState({ term });
+    };
 
     render() {
-        const { data } = this.state;
+        const { data, term } = this.state;
+        const visibleData = this.searchEmp(data, term);
+
         return (
             <div className="app">
                 <AppInfo
@@ -105,11 +106,11 @@ class App extends Component {
                 />
 
                 <div className="search-panel">
-                    <SearchPanel />
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch} />
                     <AppFilter />
                 </div>
                 <EmployesList
-                    data={data}
+                    data={visibleData}
                     onDelete={this.deleteItem}
                     onToggleProp={this.onToggleProp}
                 />
