@@ -5,16 +5,24 @@ const AppFilter = (props) => {
         { name: "all", label: "Все сотрудники" },
         { name: "rise", label: "На повышение" },
         { name: "salaryOver1000", label: "З/П больше 1000$" },
+        { name: "increase", label: "С печенькой" },
     ];
-    console.log(props);
+    console.log(props.filters);
     let clazz = "";
 
     return (
         <div className="btn-group">
             {buttonsFilter.map((item) => {
-                item.name === props.filter
-                    ? (clazz = "btn-light")
-                    : (clazz = "btn-outline-light");
+                if (props.filters.some((filter) => filter === item.name)) {
+                    console.log(item.name);
+                    clazz = "btn-light";
+                } else {
+                    clazz = "btn-outline-light";
+                }
+                if (item.name === "all" && props.filters.length === 0) {
+                    clazz = "btn-light";
+                }
+
                 return (
                     <button
                         key={item.name}

@@ -32,13 +32,13 @@ class App extends Component {
                     name: "Кржечко Вацуцкевичусссс",
                     salary: 3000,
                     increase: false,
-                    rise: false,
+                    rise: true,
                     id: 3,
                 },
             ],
 
             term: "",
-            filter: "all",
+            filters: [],
         };
 
         this.maxId = 4;
@@ -75,7 +75,6 @@ class App extends Component {
             data: data.map((elem) => {
                 if (elem.id === id) {
                     return { ...elem, [prop]: !elem[prop] };
-                    // elem.increase = !elem.increase;
                 }
                 return elem;
             }),
@@ -95,27 +94,50 @@ class App extends Component {
         this.setState({ term });
     };
 
-    filterData(items, filter) {
-        switch (filter) {
-            case "all":
-                return items;
-            case "rise":
-                return items.filter((item) => item.rise);
-            case "salaryOver1000":
-                return items.filter((item) => item.salary > 1000);
-            default:
-                return items;
-        }
+    filterData(items, filters) {
+        filters.forEach((filter) => {
+            switch (filter) {
+                case "rise":
+                    return (items = items.filter((item) => item.rise));
+                case "salaryOver1000":
+                    return (items = items.filter((item) => item.salary > 1000));
+                case "increase":
+                    return (items = items.filter((item) => item.increase));
+                default:
+                    return items;
+            }
+        });
+        return items;
     }
 
     onFilterChange = (filter) => {
-        this.setState({ filter });
+        this.setState(({ filters }) => {
+            if (filter === "all") {
+                return {
+                    filters: [],
+                };
+            }
+            if (filters.indexOf(filter) === -1) {
+                return {
+                    filters: [...filters, filter],
+                };
+            } else {
+                const newFilters = filters;
+                newFilters.splice(filters.indexOf(filter), 1);
+                return {
+                    filters: newFilters,
+                };
+            }
+        });
     };
 
     render() {
-        const { data, term, filter } = this.state;
-        const visibleData = this.filterData(this.searchEmp(data, term), filter);
-
+        const { data, term, filters } = this.state;
+        const visibleData = this.filterData(
+            this.searchEmp(data, term),
+            filters
+        );
+        // const visibleData = this.searchEmp(data, term);
         return (
             <div className="app">
                 <AppInfo
@@ -129,7 +151,7 @@ class App extends Component {
                     <SearchPanel onUpdateSearch={this.onUpdateSearch} />
                     <AppFilter
                         onFilterChange={this.onFilterChange}
-                        filter={filter}
+                        filters={filters}
                     />
                 </div>
                 <EmployesList
